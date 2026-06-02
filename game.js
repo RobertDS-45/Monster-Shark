@@ -26,7 +26,7 @@ const fish = {
     y: Math.random() * (canvas.height - 200),
     width: 40,
     height: 40,
-    speed: 12
+    speed: 8
 };
 
 // Load images
@@ -124,6 +124,28 @@ function setupMobileControls() {
         button.addEventListener('pointerleave', () => setControl(false));
     });
 }
+
+const baseWidth = 600;
+const baseHeight = 400;
+const aspectRatio = baseWidth / baseHeight;
+
+function resizeGameCanvas() {
+    const maxWidth = Math.min(window.innerWidth - 40, 760);
+    const maxHeight = window.innerHeight - 160;
+    let width = maxWidth;
+    let height = Math.round(width / aspectRatio);
+
+    if (height > maxHeight) {
+        height = maxHeight;
+        width = Math.round(height * aspectRatio);
+    }
+
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+}
+
+window.addEventListener('resize', resizeGameCanvas);
+resizeGameCanvas();
 
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
