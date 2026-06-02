@@ -44,6 +44,8 @@ let catchSound, gameoverSound;
 let musicGain;
 let musicTicker = null;
 let musicPlaying = false;
+let musicDesired = false;
+let musicWasPlayingBeforePause = false;
 let gamePaused = false;
 
 // Initialize audio context
@@ -89,7 +91,24 @@ function initAudio() {
     };
 }
 
-const musicNotes = [262, 294, 330, 349, 392, 440, 494, 523];
+const musicPattern = [
+    { freq: 330, dur: 0.32 },
+    { freq: 392, dur: 0.32 },
+    { freq: 440, dur: 0.32 },
+    { freq: 392, dur: 0.32 },
+    { freq: 330, dur: 0.32 },
+    { freq: 294, dur: 0.32 },
+    { freq: 262, dur: 0.32 },
+    { freq: 330, dur: 0.32 },
+    { freq: 330, dur: 0.32 },
+    { freq: 392, dur: 0.32 },
+    { freq: 440, dur: 0.32 },
+    { freq: 392, dur: 0.32 },
+    { freq: 330, dur: 0.32 },
+    { freq: 294, dur: 0.32 },
+    { freq: 262, dur: 0.32 },
+    { freq: 294, dur: 0.32 }
+];
 let musicStep = 0;
 
 function initMusic() {
@@ -102,35 +121,49 @@ function initMusic() {
 }
 
 function createMusicTone(frequency, duration = 0.35) {
-    const osc = audioContext.createOscillator();
-    osc.type = 'triangle';
-    osc.frequency.value = frequency;
-    osc.connect(musicGain);
-    osc.start(audioContext.currentTime);
-    osc.stop(audioContext.currentTime + duration);
+    const main = audioContext.createOscillator();
+    const mainGain = audioContext.createGain();
+    main.type = 'triangle';
+    main.frequency.value = frequency;
+    mainGain.gain.value = 0.14;
+    main.connect(mainGain);
+    mainGain.connect(musicGain);
+    main.start(audioContext.currentTime);
+    main.stop(audioContext.currentTime + duration);
+
+    const harmony = audioContext.createOscillator();
+    const harmonyGain = audioContext.createGain();
+    harmony.type = 'sine';
+    harmony.frequency.value = frequency * 0.5;
+    harmonyGain.gain.value = 0.08;
+    harmony.connect(harmonyGain);
+    harmonyGain.connect(musicGain);
+    harmony.start(audioContext.currentTime);
+    harmony.stop(audioContext.currentTime + duration);
 }
 
 function playMusicStep() {
-    if (!audioContext || audioContext.state === 'closed') return;
-    createMusicTone(musicNotes[musicStep % musicNotes.length]);
+    if (!audioContext) return;
+    const note = musicPattern[musicStep % musicPattern.length];
+    createMusicTone(note.freq, note.dur);
     musicStep += 1;
 }
 
 function startMusic() {
     initMusic();
-    if (audioContext.state === 'suspended') {
-        audioContext.resume();
-    }
     if (musicTicker) return;
+    musicDesired = true;
     playMusicStep();
-    musicTicker = setInterval(playMusicStep, 450);
+    musicTicker = setInterval(playMusicStep, 420);
     musicPlaying = true;
     updateMusicButtons();
 }
 
 function pauseMusic() {
-    if (!audioContext) return;
-    audioContext.suspend();
+    if (musicTicker) {
+        clearInterval(musicTicker);
+        musicTicker = null;
+    }
     musicPlaying = false;
     updateMusicButtons();
 }
@@ -140,10 +173,8 @@ function stopMusic() {
         clearInterval(musicTicker);
         musicTicker = null;
     }
-    if (audioContext && audioContext.state !== 'closed') {
-        audioContext.suspend();
-    }
     musicPlaying = false;
+    musicDesired = false;
     musicStep = 0;
     updateMusicButtons();
 }
@@ -238,8 +269,10 @@ document.addEventListener('keyup', (e) => {
 if (toggleMusicBtn) {
     toggleMusicBtn.addEventListener('click', () => {
         if (musicPlaying) {
+            musicDesired = false;
             pauseMusic();
         } else {
+            musicDesired = true;
             startMusic();
         }
     });
@@ -253,6 +286,18 @@ if (pauseGameBtn) {
     pauseGameBtn.addEventListener('click', () => {
         gamePaused = !gamePaused;
         pauseGameBtn.textContent = gamePaused ? 'Resume Game' : 'Pause Game';
+
+        if (gamePaused) {
+            musicWasPlayingBeforePause = musicPlaying;
+            if (musicPlaying) {
+                pauseMusic();
+            }
+        } else {
+            if (musicWasPlayingBeforePause && musicDesired) {
+                startMusic();
+            }
+            musicWasPlayingBeforePause = false;
+        }
     });
 }
 
