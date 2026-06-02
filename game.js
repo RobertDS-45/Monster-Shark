@@ -18,7 +18,7 @@ const player = {
     y: 310,
     width: 90,
     height: 90,
-    speed: 5
+    speed: 12
 };
 
 const fish = {
@@ -26,7 +26,7 @@ const fish = {
     y: Math.random() * (canvas.height - 200),
     width: 40,
     height: 40,
-    speed: 8
+    speed: 12
 };
 
 // Load images
