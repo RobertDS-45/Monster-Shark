@@ -62,11 +62,49 @@
             text-align: center;
             display: none;
         }
-        
+
+        .controls-container {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(46, 139, 87, 0.95);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            touch-action: none;
+            user-select: none;
+        }
+
+        .control-btn:active {
+            transform: scale(0.98);
+            background: rgba(34, 139, 34, 0.95);
+        }
+
         .instructions {
             margin-top: 15px;
             font-size: 14px;
             color: #666;
+        }
+
+        .instructions.mobile {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #444;
         }
         
         h1 {
@@ -86,6 +124,19 @@
         </div>
         <div class="instructions">
             Use arrow keys to move the shark. Catch fish to score points!
+        </div>
+        <div class="controls-container" id="mobileControls">
+            <div class="control-row">
+                <button class="control-btn" data-dir="up">↑</button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" data-dir="left">←</button>
+                <button class="control-btn" data-dir="down">↓</button>
+                <button class="control-btn" data-dir="right">→</button>
+            </div>
+            <div class="instructions mobile">
+                Touch controls for mobile — hold buttons to move, release to stop.
+            </div>
         </div>
     </div>
     

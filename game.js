@@ -84,6 +84,46 @@ function initAudio() {
 
 // Input handling
 const keys = {};
+const mobileControls = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+};
+
+const mobileControlsElement = document.getElementById('mobileControls');
+const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+
+function setupMobileControls() {
+    if (!mobileControlsElement) {
+        return;
+    }
+
+    if (!isTouchDevice) {
+        mobileControlsElement.style.display = 'none';
+        return;
+    }
+
+    mobileControlsElement.style.display = 'block';
+    const buttons = mobileControlsElement.querySelectorAll('.control-btn');
+
+    buttons.forEach((button) => {
+        const direction = button.dataset.dir;
+
+        const setControl = (value) => {
+            mobileControls[direction] = value;
+        };
+
+        button.addEventListener('pointerdown', (event) => {
+            event.preventDefault();
+            setControl(true);
+        });
+
+        button.addEventListener('pointerup', () => setControl(false));
+        button.addEventListener('pointercancel', () => setControl(false));
+        button.addEventListener('pointerleave', () => setControl(false));
+    });
+}
 
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
@@ -96,6 +136,8 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
+
+setupMobileControls();
 
 // Game functions
 function resetGame() {
@@ -111,16 +153,16 @@ function resetGame() {
 }
 
 function updatePlayer() {
-    if (keys['ArrowLeft'] && player.x > 0) {
+    if ((keys['ArrowLeft'] || mobileControls.left) && player.x > 0) {
         player.x -= player.speed;
     }
-    if (keys['ArrowRight'] && player.x < canvas.width - player.width) {
+    if ((keys['ArrowRight'] || mobileControls.right) && player.x < canvas.width - player.width) {
         player.x += player.speed;
     }
-    if (keys['ArrowUp'] && player.y > 0) {
+    if ((keys['ArrowUp'] || mobileControls.up) && player.y > 0) {
         player.y -= player.speed;
     }
-    if (keys['ArrowDown'] && player.y < canvas.height - player.height) {
+    if ((keys['ArrowDown'] || mobileControls.down) && player.y < canvas.height - player.height) {
         player.y += player.speed;
     }
 }
