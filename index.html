@@ -58,6 +58,11 @@
             .instructions.mobile {
                 font-size: 14px;
             }
+            .music-btn {
+                min-width: 100px;
+                font-size: 14px;
+                padding: 10px 14px;
+            }
         }
         
         .game-info {
@@ -96,6 +101,35 @@
             margin-top: 15px;
             text-align: center;
             gap: 8px;
+        }
+
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .music-btn {
+            min-width: 120px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 14px;
+            background: rgba(30, 144, 255, 0.95);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .music-btn:hover {
+            background: rgba(24, 116, 205, 0.95);
+        }
+
+        .music-btn:active {
+            transform: scale(0.98);
         }
 
         .control-row {
@@ -152,6 +186,11 @@
         </div>
         <div class="instructions">
             Use arrow keys to move the shark. Catch fish to score points!
+        </div>
+        <div class="music-controls" id="musicControls">
+            <button id="toggleMusic" class="music-btn">Play Music</button>
+            <button id="stopMusic" class="music-btn">Stop Music</button>
+            <button id="pauseGame" class="music-btn">Pause Game</button>
         </div>
         <div class="controls-container" id="mobileControls">
             <div class="control-row">

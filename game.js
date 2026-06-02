@@ -39,11 +39,18 @@ fishImg.src = 'assets/fish.png';
 backgroundImg.src = 'assets/background.png';
 
 // Sound effects (using Web Audio API)
+let audioContext;
 let catchSound, gameoverSound;
+let musicGain;
+let musicTicker = null;
+let musicPlaying = false;
+let gamePaused = false;
 
 // Initialize audio context
 function initAudio() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
     
     // Create catch sound (beep)
     catchSound = () => {
@@ -69,7 +76,7 @@ function initAudio() {
         const gainNode = audioContext.createGain();
         
         oscillator.connect(gainNode);
-        gainNode.connect(audioContext.currentTime);
+        gainNode.connect(audioContext.destination);
         
         oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
         oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.3);
@@ -82,6 +89,72 @@ function initAudio() {
     };
 }
 
+const musicNotes = [262, 294, 330, 349, 392, 440, 494, 523];
+let musicStep = 0;
+
+function initMusic() {
+    initAudio();
+    if (!musicGain) {
+        musicGain = audioContext.createGain();
+        musicGain.gain.value = 0.18;
+        musicGain.connect(audioContext.destination);
+    }
+}
+
+function createMusicTone(frequency, duration = 0.35) {
+    const osc = audioContext.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.value = frequency;
+    osc.connect(musicGain);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + duration);
+}
+
+function playMusicStep() {
+    if (!audioContext || audioContext.state === 'closed') return;
+    createMusicTone(musicNotes[musicStep % musicNotes.length]);
+    musicStep += 1;
+}
+
+function startMusic() {
+    initMusic();
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    if (musicTicker) return;
+    playMusicStep();
+    musicTicker = setInterval(playMusicStep, 450);
+    musicPlaying = true;
+    updateMusicButtons();
+}
+
+function pauseMusic() {
+    if (!audioContext) return;
+    audioContext.suspend();
+    musicPlaying = false;
+    updateMusicButtons();
+}
+
+function stopMusic() {
+    if (musicTicker) {
+        clearInterval(musicTicker);
+        musicTicker = null;
+    }
+    if (audioContext && audioContext.state !== 'closed') {
+        audioContext.suspend();
+    }
+    musicPlaying = false;
+    musicStep = 0;
+    updateMusicButtons();
+}
+
+function updateMusicButtons() {
+    const toggleMusicBtn = document.getElementById('toggleMusic');
+    if (toggleMusicBtn) {
+        toggleMusicBtn.textContent = musicPlaying ? 'Pause Music' : 'Play Music';
+    }
+}
+
 // Input handling
 const keys = {};
 const mobileControls = {
@@ -92,6 +165,9 @@ const mobileControls = {
 };
 
 const mobileControlsElement = document.getElementById('mobileControls');
+const toggleMusicBtn = document.getElementById('toggleMusic');
+const stopMusicBtn = document.getElementById('stopMusic');
+const pauseGameBtn = document.getElementById('pauseGame');
 const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
 function setupMobileControls() {
@@ -159,6 +235,28 @@ document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
+if (toggleMusicBtn) {
+    toggleMusicBtn.addEventListener('click', () => {
+        if (musicPlaying) {
+            pauseMusic();
+        } else {
+            startMusic();
+        }
+    });
+}
+
+if (stopMusicBtn) {
+    stopMusicBtn.addEventListener('click', stopMusic);
+}
+
+if (pauseGameBtn) {
+    pauseGameBtn.addEventListener('click', () => {
+        gamePaused = !gamePaused;
+        pauseGameBtn.textContent = gamePaused ? 'Resume Game' : 'Pause Game';
+    });
+}
+
+updateMusicButtons();
 setupMobileControls();
 
 // Game functions
@@ -254,7 +352,7 @@ function draw() {
 function gameLoop() {
     if (!running) return;
     
-    if (!gameOver) {
+    if (!gameOver && !gamePaused) {
         updatePlayer();
         updateFish();
         checkCollision();
