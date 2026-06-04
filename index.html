@@ -13,15 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            color: #0f3057;
-        }
-        
-        .game-container {
-            position: relative;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
+        height: 100svh;
             border-radius: 28px;
             padding: 24px;
             box-shadow: 0 22px 60px rgba(5, 24, 58, 0.28);
@@ -56,7 +48,7 @@
 
             /* Canvas should prefer height but be capped so controls remain visible */
             canvas {
-                max-height: 42vh;
+                max-height: 38vh;
                 height: auto;
             }
 
@@ -65,7 +57,8 @@
                 flex-direction: column;
                 gap: 6px;
                 font-size: 15px;
-                padding: 8px;
+                padding: 6px;
+                margin-top: 8px;
             }
 
             .score, .missed {
@@ -73,14 +66,35 @@
                 font-size: 15px;
             }
 
-            /* Utility buttons: attempt a single row, fall back to 2x2 grid on very narrow screens */
+            .instructions {
+                margin-top: 6px;
+                margin-bottom: 6px;
+                font-size: 13px;
+            }
+
+            /* Utility buttons: flex container for rows */
             .music-controls {
                 display: flex;
-                justify-content: center;
+                flex-direction: column;
+                align-items: center;
                 gap: 8px;
-                flex-wrap: nowrap;
                 order: 1;
                 margin-top: 6px;
+            }
+
+            /* Audio controls row: Play + Stop side-by-side */
+            .audio-controls-row {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                width: 100%;
+            }
+
+            /* Centered pause/resume button beneath the audio row */
+            .game-control-row {
+                display: flex;
+                justify-content: center;
+                margin-top: 2px;
             }
 
             .music-btn {
@@ -90,19 +104,30 @@
                 border-radius: 12px;
             }
 
-            /* For very narrow devices, use a compact 2-column grid */
+            /* Slightly different sizing for the pause/resume button */
+            .game-control-btn {
+                min-width: 120px;
+                padding: 8px 12px;
+            }
+
+            /* For very narrow devices, use a compact 2-column grid for audio buttons */
             @media (max-width: 420px) {
-                .music-controls {
+                .audio-controls-row {
                     display: grid;
                     grid-template-columns: repeat(2, 1fr);
                     gap: 6px;
+                }
+
+                .game-control-btn {
+                    min-width: auto;
+                    width: 100%;
                 }
             }
 
             /* D-pad should sit directly under the utility buttons and be slightly smaller */
             .mobile-controls {
                 order: 2;
-                margin-top: 8px;
+                margin-top: 6px;
                 align-self: center;
             }
 
@@ -364,9 +389,13 @@
             Use arrow keys to move the shark. Catch fish to score points!
         </div>
         <div class="music-controls" id="musicControls">
-            <button id="toggleMusic" class="music-btn">Play Music</button>
-            <button id="stopMusic" class="music-btn">Stop Music</button>
-            <button id="pauseGame" class="music-btn">Pause Game</button>
+            <div class="audio-controls-row">
+                <button id="toggleMusic" class="music-btn">Play Music</button>
+                <button id="stopMusic" class="music-btn">Stop Music</button>
+            </div>
+            <div class="game-control-row">
+                <button id="pauseGame" class="music-btn game-control-btn">Pause Game</button>
+            </div>
         </div>
         <div class="controls-container mobile-controls" id="mobileControls">
             <div class="dpad-grid">
