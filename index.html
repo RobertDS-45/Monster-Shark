@@ -42,28 +42,81 @@
             margin: 0 auto;
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+            /* Compact the main card and reduce spacing so everything fits vertically */
             .game-container {
-                padding: 16px;
+                padding: 10px;
+                width: calc(100vw - 12px);
             }
+
+            h1 {
+                font-size: 18px;
+                margin: 6px 0 8px 0;
+            }
+
+            /* Canvas should prefer height but be capped so controls remain visible */
+            canvas {
+                max-height: 42vh;
+                height: auto;
+            }
+
+            /* Score boxes — compact and stacked */
             .game-info {
                 flex-direction: column;
-                gap: 10px;
-                font-size: 16px;
+                gap: 6px;
+                font-size: 15px;
+                padding: 8px;
             }
-            .control-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
+
+            .score, .missed {
+                padding: 8px 10px;
+                font-size: 15px;
             }
-            .instructions,
-            .instructions.mobile {
-                font-size: 14px;
+
+            /* Utility buttons: attempt a single row, fall back to 2x2 grid on very narrow screens */
+            .music-controls {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: nowrap;
+                order: 1;
+                margin-top: 6px;
             }
+
             .music-btn {
-                min-width: 90px;
+                min-width: 0;
+                padding: 8px 10px;
                 font-size: 13px;
-                padding: 8px 12px;
+                border-radius: 12px;
+            }
+
+            /* For very narrow devices, use a compact 2-column grid */
+            @media (max-width: 420px) {
+                .music-controls {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 6px;
+                }
+            }
+
+            /* D-pad should sit directly under the utility buttons and be slightly smaller */
+            .mobile-controls {
+                order: 2;
+                margin-top: 8px;
+                align-self: center;
+            }
+
+            .dpad-grid {
+                grid-template-columns: repeat(3, 56px);
+                grid-template-rows: repeat(3, 56px);
+                gap: 6px;
+            }
+
+            .control-btn {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+                border-radius: 12px;
             }
         }
         
