@@ -215,12 +215,12 @@ function setupMobileControls() {
         return;
     }
 
+    // Only attach touch handlers on real touch devices.
     if (!isTouchDevice) {
-        mobileControlsElement.style.display = 'none';
+        // Let CSS keep the controls hidden on desktop; no inline styles.
         return;
     }
 
-    mobileControlsElement.style.display = 'block';
     const buttons = mobileControlsElement.querySelectorAll('.control-btn');
 
     buttons.forEach((button) => {

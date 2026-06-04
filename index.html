@@ -150,11 +150,19 @@
             box-shadow: 0 8px 16px rgba(1, 31, 69, 0.16);
         }
 
-        #mobileControls {
-            display: grid;
-            justify-items: center;
-            gap: 14px;
-            margin-top: 20px;
+        /* Mobile-only wrapper: hidden by default (desktop) */
+        .mobile-controls {
+            display: none;
+        }
+
+        /* Reveal mobile controls on small screens */
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: grid;
+                justify-items: center;
+                gap: 14px;
+                margin-top: 20px;
+            }
         }
 
         .dpad-grid {
@@ -221,7 +229,7 @@
         <canvas id="gameCanvas" width="600" height="400"></canvas>
         <div class="game-info">
             <div class="score">Score: <span id="score">0</span></div>
-            <div class="missed">Missed: <span id="missed">0</span> / 100</div>
+            <div class="missed">Missed: <span id="missed">0</span></div>
         </div>
         <div class="instructions">
             Use arrow keys to move the shark. Catch fish to score points!
@@ -231,7 +239,7 @@
             <button id="stopMusic" class="music-btn">Stop Music</button>
             <button id="pauseGame" class="music-btn">Pause Game</button>
         </div>
-        <div class="controls-container" id="mobileControls">
+        <div class="controls-container mobile-controls" id="mobileControls">
             <div class="dpad-grid">
                 <div></div>
                 <button class="control-btn" data-dir="up">↑</button>
