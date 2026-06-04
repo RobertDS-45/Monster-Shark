@@ -8,9 +8,12 @@ const gameOverElement = document.getElementById('gameOver');
 // Game state
 let score = 0;
 let missed = 0;
-let maxMissed = 100;
-let gameOver = false;
+const maxMissed = 100;
+let isGameOver = false;
+let isPaused = false;
 let running = true;
+let loopActive = false;
+let audioPrimed = false;
 
 // Game objects
 const player = {
@@ -46,7 +49,6 @@ let musicTicker = null;
 let musicPlaying = false;
 let musicDesired = false;
 let musicWasPlayingBeforePause = false;
-let gamePaused = false;
 
 // Initialize audio context
 function initAudio() {
@@ -149,8 +151,15 @@ function playMusicStep() {
     musicStep += 1;
 }
 
-function startMusic() {
+function primeAudio() {
+    if (audioPrimed) return;
+    initAudio();
     initMusic();
+    audioPrimed = true;
+}
+
+function startMusic() {
+    primeAudio();
     if (musicTicker) return;
     musicDesired = true;
     playMusicStep();
@@ -257,7 +266,7 @@ resizeGameCanvas();
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     
-    if (gameOver && e.key === 'r') {
+    if (isGameOver && e.key.toLowerCase() === 'r') {
         resetGame();
     }
 });
@@ -284,19 +293,20 @@ if (stopMusicBtn) {
 
 if (pauseGameBtn) {
     pauseGameBtn.addEventListener('click', () => {
-        gamePaused = !gamePaused;
-        pauseGameBtn.textContent = gamePaused ? 'Resume Game' : 'Pause Game';
+        isPaused = !isPaused;
+        pauseGameBtn.textContent = isPaused ? 'Resume Game' : 'Pause Game';
 
-        if (gamePaused) {
+        if (isPaused) {
             musicWasPlayingBeforePause = musicPlaying;
             if (musicPlaying) {
                 pauseMusic();
             }
         } else {
-            if (musicWasPlayingBeforePause && musicDesired) {
+            if (!isGameOver && musicWasPlayingBeforePause && musicDesired) {
                 startMusic();
             }
             musicWasPlayingBeforePause = false;
+            ensureLoop();
         }
     });
 }
@@ -304,17 +314,20 @@ if (pauseGameBtn) {
 updateMusicButtons();
 setupMobileControls();
 
-// Game functions
+
 function resetGame() {
     score = 0;
     missed = 0;
-    gameOver = false;
+    isGameOver = false;
+    isPaused = false;
     player.x = 255;
     player.y = 310;
     fish.x = Math.random() * (canvas.width - 40);
     fish.y = Math.random() * (canvas.height - 200);
     gameOverElement.style.display = 'none';
+    pauseGameBtn.textContent = 'Pause Game';
     updateUI();
+    ensureLoop();
 }
 
 function updatePlayer() {
@@ -365,10 +378,10 @@ function checkCollision() {
 
 function updateUI() {
     scoreElement.textContent = score;
-    missedElement.textContent = missed;
+    missedElement.textContent = `${missed} / ${maxMissed}`;
     
-    if (missed >= maxMissed) {
-        gameOver = true;
+    if (missed >= maxMissed && !isGameOver) {
+        isGameOver = true;
         gameoverSound();
         gameOverElement.style.display = 'block';
     }
@@ -386,25 +399,30 @@ function draw() {
     
     // Draw fish
     ctx.drawImage(fishImg, fish.x, fish.y, fish.width, fish.height);
-    
-    // Draw score and missed count
-    ctx.fillStyle = '#000';
-    ctx.font = '24px Arial';
-    ctx.fillText(`Score: ${score}`, 10, 30);
-    ctx.fillText(`Missed: ${missed}/${maxMissed}`, 10, 60);
 }
 
 function gameLoop() {
     if (!running) return;
-    
-    if (!gameOver && !gamePaused) {
-        updatePlayer();
-        updateFish();
-        checkCollision();
+
+    if (isPaused || isGameOver) {
+        draw();
+        loopActive = false;
+        return;
     }
-    
+
+    updatePlayer();
+    updateFish();
+    checkCollision();
     draw();
+    loopActive = true;
     requestAnimationFrame(gameLoop);
+}
+
+function ensureLoop() {
+    if (!loopActive && running && !isPaused && !isGameOver) {
+        loopActive = true;
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 // Start game when images are loaded

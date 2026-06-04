@@ -8,23 +8,25 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #87CEEB, #98FB98);
-            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, #8fd2ff 0%, #1c4f7d 55%, #071b31 100%);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
+            color: #0f3057;
         }
         
         .game-container {
+            position: relative;
             text-align: center;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: min(100vw - 20px, 760px);
-            max-width: 760px;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 22px 60px rgba(5, 24, 58, 0.28);
+            width: min(100vw - 24px, 780px);
+            max-width: 780px;
         }
         
         canvas {
@@ -66,110 +68,144 @@
         }
         
         .game-info {
-            margin-top: 15px;
+            margin-top: 18px;
             display: flex;
             justify-content: space-between;
+            gap: 14px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 700;
+            padding: 14px 18px;
+            border-radius: 22px;
+            background: rgba(7, 41, 81, 0.07);
+            backdrop-filter: blur(6px);
+        }
+        
+        .score,
+        .missed {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(6, 47, 89, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
         }
         
         .score {
-            color: #2E8B57;
+            color: #1a4a72;
         }
         
         .missed {
-            color: #DC143C;
+            color: #004868;
         }
         
         .game-over {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(220, 20, 60, 0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
+            inset: 20px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            background: rgba(0, 23, 55, 0.72);
+            color: #f8f2e9;
+            padding: 30px 24px;
+            border-radius: 28px;
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 800;
             text-align: center;
-            display: none;
+            box-shadow: 0 24px 48px rgba(3, 20, 50, 0.38);
         }
 
-        .controls-container {
-            display: none;
-            margin-top: 15px;
-            text-align: center;
-            gap: 8px;
-        }
-
-        .music-controls {
+        #musicControls {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 14px;
+            gap: 12px;
+            margin-top: 18px;
         }
 
         .music-btn {
-            min-width: 100px;
-            padding: 10px 14px;
+            min-width: 120px;
+            padding: 14px 18px;
             border: none;
-            border-radius: 14px;
-            background: rgba(30, 144, 255, 0.95);
+            border-radius: 20px;
+            background: linear-gradient(135deg, #006db3, #1cb5f3);
             color: white;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease, background 0.15s ease;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
             display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 14px 30px rgba(1, 31, 69, 0.22);
+        }
+
+        .music-btn:hover {
+            background: linear-gradient(135deg, #005b9a, #1690cb);
+            transform: translateY(-1px);
+        }
+
+        .music-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 8px 16px rgba(1, 31, 69, 0.16);
+        }
+
+        #mobileControls {
+            display: grid;
+            justify-items: center;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .dpad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 72px);
+            grid-template-rows: repeat(3, 72px);
+            gap: 10px;
             justify-content: center;
             align-items: center;
         }
 
-        .music-btn:hover {
-            background: rgba(24, 116, 205, 0.95);
-        }
-
-        .music-btn:active {
-            transform: scale(0.98);
-        }
-
-        .control-row {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
+        .dpad-grid div {
+            width: 72px;
+            height: 72px;
         }
 
         .control-btn {
-            width: 70px;
-            height: 70px;
+            width: 72px;
+            height: 72px;
             border: none;
-            border-radius: 16px;
-            background: rgba(46, 139, 87, 0.95);
+            border-radius: 18px;
+            background: linear-gradient(145deg, #1395d5, #0572a6);
             color: white;
             font-size: 28px;
-            font-weight: bold;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            font-weight: 800;
+            box-shadow: 0 14px 28px rgba(0, 29, 62, 0.24);
             touch-action: none;
             user-select: none;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(145deg, #0f7daa, #045b80);
         }
 
         .control-btn:active {
-            transform: scale(0.98);
-            background: rgba(34, 139, 34, 0.95);
+            transform: scale(0.94);
+            background: linear-gradient(145deg, #096189, #044b6c);
+            box-shadow: 0 10px 18px rgba(0, 29, 62, 0.2);
         }
 
         .instructions {
             margin-top: 15px;
             font-size: 14px;
-            color: #666;
+            color: #2e3f55;
         }
 
         .instructions.mobile {
             margin-top: 8px;
             font-size: 13px;
-            color: #444;
+            color: #23405f;
         }
         
         h1 {
@@ -185,7 +221,7 @@
         <canvas id="gameCanvas" width="600" height="400"></canvas>
         <div class="game-info">
             <div class="score">Score: <span id="score">0</span></div>
-            <div class="missed">Missed: <span id="missed">0</span>/100</div>
+            <div class="missed">Missed: <span id="missed">0</span> / 100</div>
         </div>
         <div class="instructions">
             Use arrow keys to move the shark. Catch fish to score points!
@@ -196,13 +232,15 @@
             <button id="pauseGame" class="music-btn">Pause Game</button>
         </div>
         <div class="controls-container" id="mobileControls">
-            <div class="control-row">
+            <div class="dpad-grid">
+                <div></div>
                 <button class="control-btn" data-dir="up">↑</button>
-            </div>
-            <div class="control-row">
+                <div></div>
                 <button class="control-btn" data-dir="left">←</button>
-                <button class="control-btn" data-dir="down">↓</button>
+                <div></div>
                 <button class="control-btn" data-dir="right">→</button>
+                <div></div>
+                <button class="control-btn" data-dir="down">↓</button>
             </div>
             <div class="instructions mobile">
                 Touch controls for mobile — hold buttons to move, release to stop.
