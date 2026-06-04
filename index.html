@@ -216,6 +216,81 @@
             color: #23405f;
         }
         
+        /* Landscape phone layout: side-by-side canvas + sidebar */
+        @media (orientation: landscape) and (max-height: 520px) {
+            .game-container {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            /* Canvas column */
+            canvas {
+                flex: 1 1 auto;
+                width: auto;
+                max-height: 80vh;
+                border-radius: 12px;
+            }
+
+            /* Sidebar column */
+            .sidebar {
+                width: 260px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+                justify-content: flex-start;
+            }
+
+            /* Hide the main header to save vertical space */
+            h1 {
+                display: none;
+            }
+
+            /* Compact score and missed boxes */
+            .game-info {
+                flex-direction: column;
+                gap: 6px;
+                padding: 8px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+
+            .score, .missed {
+                padding: 8px 10px;
+                font-size: 16px;
+                margin: 0;
+            }
+
+            /* Make utility buttons compact */
+            .music-btn {
+                min-width: 96px;
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+
+            /* D-pad on the right and slightly smaller */
+            .mobile-controls {
+                align-self: center;
+                margin-top: 6px;
+            }
+
+            .dpad-grid {
+                grid-template-columns: repeat(3, 56px);
+                grid-template-rows: repeat(3, 56px);
+                gap: 8px;
+            }
+
+            .control-btn {
+                width: 56px;
+                height: 56px;
+                border-radius: 12px;
+                font-size: 20px;
+            }
+        }
+
         h1 {
             color: #2E8B57;
             margin-bottom: 20px;
@@ -227,6 +302,7 @@
     <div class="game-container">
         <h1>🦈 Monster Shark Catch Fish 🐟</h1>
         <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="sidebar">
         <div class="game-info">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="missed">Missed: <span id="missed">0</span></div>
@@ -253,6 +329,7 @@
             <div class="instructions mobile">
                 Touch controls for mobile — hold buttons to move, release to stop.
             </div>
+        </div>
         </div>
     </div>
     
