@@ -309,6 +309,35 @@ if (pauseGameBtn) {
 updateMusicButtons();
 setupMobileControls();
 
+// Prevent touch scrolling / bouncing when interacting with controls
+function preventTouchScrollingForControls() {
+    // Buttons we want to lock down
+    const controlSelectors = '.dpad-btn, .control-btn, #pauseGame';
+    const buttons = document.querySelectorAll(controlSelectors);
+
+    buttons.forEach((btn) => {
+        try {
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); }, { passive: false });
+            btn.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+        } catch (err) {
+            // older browsers may ignore options param
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); });
+            btn.addEventListener('touchmove', (e) => { e.preventDefault(); });
+        }
+    });
+
+    // Prevent touchmove on the document to avoid bounce/scroll entirely
+    try {
+        document.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive: false });
+    } catch (err) {
+        document.addEventListener('touchmove', function(e){ e.preventDefault(); });
+    }
+}
+
+preventTouchScrollingForControls();
+
 
 function resetGame() {
     score = 0;
