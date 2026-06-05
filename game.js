@@ -7,7 +7,7 @@ const gameOverElement = document.getElementById('gameOver');
 
 // Game state
 let score = 0;
-let missed = 0;
+let missed = 28;
 const maxMissed = 100;
 let isGameOver = false;
 let isPaused = false;
@@ -211,24 +211,19 @@ const pauseGameBtn = document.getElementById('pauseGame');
 const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
 function setupMobileControls() {
-    if (!mobileControlsElement) {
-        return;
-    }
+    if (!mobileControlsElement) return;
 
     // Only attach touch handlers on real touch devices.
-    if (!isTouchDevice) {
-        // Let CSS keep the controls hidden on desktop; no inline styles.
-        return;
-    }
+    if (!isTouchDevice) return;
 
-    const buttons = mobileControlsElement.querySelectorAll('.control-btn');
+    // support both the legacy .control-btn and the new .dpad-btn
+    const buttons = mobileControlsElement.querySelectorAll('.control-btn, .dpad-btn');
 
     buttons.forEach((button) => {
         const direction = button.dataset.dir;
+        if (!direction) return;
 
-        const setControl = (value) => {
-            mobileControls[direction] = value;
-        };
+        const setControl = (value) => { mobileControls[direction] = value; };
 
         button.addEventListener('pointerdown', (event) => {
             event.preventDefault();
@@ -317,7 +312,7 @@ setupMobileControls();
 
 function resetGame() {
     score = 0;
-    missed = 0;
+    missed = 28;
     isGameOver = false;
     isPaused = false;
     player.x = 255;
